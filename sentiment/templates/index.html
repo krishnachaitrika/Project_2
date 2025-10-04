@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sentiment Analyzer</title>
+    <style>
+        body {
+    font-family: Arial, sans-serif;
+    background: url('/static/v2.jpg') no-repeat center center fixed;
+    background-size: cover;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+        .container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 400px;
+            text-align: center;
+        }
+        h1 {
+            font-size: 24px;
+            color: #333;
+            margin-bottom: 20px;
+        }
+        label {
+            font-size: 14px;
+            color: #666;
+        }
+        textarea {
+            width: 100%;
+            height: 100px;
+            margin: 10px 0;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            resize: none;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #c3126a;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #1da1d6;
+        }
+        #result {
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            text-align: left;
+            font-size: 14px;
+            background-color: #fafafa;
+            max-height: 150px;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Sentiment Analysis</h1>
+        <label for="comment">Enter your comment below:</label>
+        <textarea id="comment" placeholder="Type your comment here..."></textarea>
+        <button onclick="analyzeSentiment()">Analyze Sentiment</button>
+        <div id="result"></div>
+    </div>
+
+    <script>
+        function analyzeSentiment() {
+            const comment = document.getElementById("comment").value.trim();
+            const resultDiv = document.getElementById("result");
+
+            if (!comment) {
+                resultDiv.innerHTML = "Please enter a comment to analyze.";
+                return;
+            }
+
+            // Send data to Flask backend
+            fetch("/", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded"
+                },
+                body: new URLSearchParams({ comment: comment })
+            })
+            .then(response => response.text())
+            .then(data => {
+                resultDiv.innerHTML = data;
+            })
+            .catch(error => {
+                resultDiv.innerHTML = "Error analyzing sentiment.";
+                console.error("Error:", error);
+            });
+        }
+    </script>
+</body>
+</html>
